@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_export_product_inventory_to_file_form" model="ir.ui.view">
+            <field name="name">Export Product form</field>
+            <field name="model">export.product.with.inventory.file</field>
+            <field name="arch" type="xml">
+                <form string="Export Product to file">
+                	<group>
+                		<field name="file_data" invisible="1"/>
+                	</group>
+                	<footer>
+                        <button name="export_products" string="Export" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_highlight" special="cancel" />
+                    </footer>
+               </form>
+            </field>
+        </record>
+        
+        <record id="action_export_product_to_file" model="ir.actions.act_window">
+            <field name="name">Export Product</field>
+            <field name="res_model">export.product.with.inventory.file</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+         </record>
+		
+		<!-- <record model="ir.actions.server" id="action_export_product_to_file">
+	        <field name="name">Export Product</field>
+	        <field name="model_id" ref="import_product_inventory.model_export_product_with_inventory_file"/>
+	        <field name="type">ir.actions.server</field>
+	        <field name="state">code</field>
+	        <field name="code">
+	            model.export_products()
+	        </field>
+	    </record> -->
+		<menuitem id="main_action_export_product_to_file"
+        	parent="stock.menu_stock_inventory_control"
+        	name="Export Product"
+        	action="action_export_product_to_file"
+        	sequence="152"/>
+    </data>
+</odoo>

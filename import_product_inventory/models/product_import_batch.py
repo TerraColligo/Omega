@@ -175,7 +175,8 @@ class ProductImportBatch(models.Model):
                                 inventory_line_vals[location_id] += line
                             #inventory_line_vals[location_id].append({'product_id':product_exist.id, 'product_uom_id': product_exist.uom_id.id,'product_qty':product_qty, 'location_id':location_id})
                 if inventory_line_vals:
-                    self.create_inventory(inventory_line_vals, location_id_inventory_dict)                    
+                    self.create_inventory(inventory_line_vals, location_id_inventory_dict)
+                                            
                 batch.write({'state':'imported'})
                 cr.execute('RELEASE SAVEPOINT model_batch_save')
             except Exception as e:

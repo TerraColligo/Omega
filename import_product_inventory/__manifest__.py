@@ -12,6 +12,7 @@
         'data/cron.xml',
         'views/product_import_batch_view.xml',
         'wizard/import_product_wizard_view.xml',
+        'wizard/export_product_view.xml',
         ],
  'installable': True,
  'application': True,
