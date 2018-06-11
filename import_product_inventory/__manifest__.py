@@ -14,6 +14,9 @@
         'wizard/import_product_wizard_view.xml',
         'wizard/export_product_view.xml',
         ],
+  "qweb": [
+       "static/src/xml/base.xml",
+        ],
  'installable': True,
  'application': True,
  }

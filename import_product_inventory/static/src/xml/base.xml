@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+	<t t-extend="FieldBinaryFile">
+		<t t-jquery="t[t-call*='HiddenInputFile']" t-operation="append">
+			<t t-set="widget.accept" t-value="widget.attrs.accept"/>
+		</t>
+	</t>
+	<t t-extend="HiddenInputFile">
+		<t t-jquery="form input[t-if*='!widget.image_only']" t-operation="replace">
+			<t t-if="widget.accept">
+            	<input t-if="!widget.image_only" type="file" class="o_input_file" name="ufile" t-att="{'multiple': multi_upload ? 'multiple' : null}" t-att-accept="widget.accept"/>
+            </t>
+            <t t-else="">
+            	<input t-if="!widget.image_only" type="file" class="o_input_file" name="ufile" t-att="{'multiple': multi_upload ? 'multiple' : null}"/>
+            </t>
+		</t>
+	</t>
+</templates>

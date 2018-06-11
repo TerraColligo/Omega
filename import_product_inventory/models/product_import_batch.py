@@ -8,11 +8,13 @@ _logger = logging.getLogger(__name__)
 class ProductImportBatch(models.Model):
     _name = 'product.import.batch'
     _order = 'create_date desc'
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin']
     
     name = fields.Char('Batch Name')
     data = fields.Text('Batch Data',default="{}")
     sheet_name = fields.Char('Sheet Name')
     state = fields.Selection([('pending','Pending'),('imported','Imported'),('failed','Failed')],string='Status',default='pending')
+    inventory_option = fields.Selection([('ADD','ADD'),('SET','SET')],string="Inventory Option")
     
     @api.multi
     def action_import_product_data(self):
@@ -33,17 +35,23 @@ class ProductImportBatch(models.Model):
         location_id_dict = {}
         company_id = self.env.user.company_id.id
         uid = self._uid
+        
         for batch_id in ids:
             try:
                 inventory_line_vals = {}
                 location_id_inventory_dict = {}
+                inventory_columns = []
                 batch = self.browse(batch_id)
+                inventory_option = batch.inventory_option
                 cr.execute('SAVEPOINT model_batch_save')
                 try:
                     data = json.loads(batch.data)
                 except Exception as e:
                     continue
                 for product in data:
+                    if not inventory_columns:
+                        inventory_columns = list(set(product.keys())-set(product_columns))
+                    
                     category_name = product.get('categ_id/name')
                     uom_name = product.get('unit_of_measurement')
                     #category_code = product.get('Cat Code')
@@ -144,7 +152,6 @@ class ProductImportBatch(models.Model):
                                 product_exist = product_obj.create(product_vals)
                             self.get_create_xml_id(product_exist, external_id)
                             cr.execute('RELEASE SAVEPOINT model_batch_product_save')
-                    inventory_columns = list(set(product.keys())-set(product_columns))
                     for column_name in inventory_columns:
                         product_qty = product.get(column_name)
                         code = column_name.strip()
@@ -168,6 +175,8 @@ class ProductImportBatch(models.Model):
                             cr.execute("select sum(quantity) from stock_quant where company_id=%d and location_id=%d and product_id=%d"%(company_id, location_id_inventory_dict.get(location_id),product_exist.id))
                             theoretical_qty = cr.fetchone()
                             theoretical_qty = theoretical_qty and theoretical_qty[0] or None
+                            if theoretical_qty and inventory_option=='ADD':
+                                product_qty += theoretical_qty
                             if theoretical_qty==None or theoretical_qty!=product_qty:
                                 if theoretical_qty==None:
                                     theoretical_qty=0.0
@@ -195,6 +204,8 @@ class ProductImportBatch(models.Model):
                 continue
             if inventory_vals[-1:]==',':
                 inventory_vals = inventory_vals[:-1]
+            if not inventory_vals:
+                continue
             self._cr.execute("INSERT into stock_inventory_line(id,create_uid, create_date, write_uid, write_date, product_qty, location_id, company_id, inventory_id, product_id, product_uom_id, theoretical_qty) values%s"%inventory_vals)
             inventory_rec = inventory_obj.browse(inventory_id)
             inventory_rec.action_start()
@@ -208,15 +219,18 @@ class ProductImportBatch(models.Model):
     def get_create_xml_id(self,record, external_id):
         """ Return a valid xml_id for the record ``self``. """
         if external_id:
-            ir_model_data = self.sudo().env['ir.model.data']
-            data = ir_model_data.search([('model', '=', record._name), ('res_id', '=', record.id)])
+            #ir_model_data = self.sudo().env['ir.model.data']
+            #data = ir_model_data.search([('model', '=', record._name), ('res_id', '=', record.id)])
+            self._cr.execute("select id,module,name from ir_model_data where model='%s' and res_id=%d"%(record._name,record.id))
+            data = self._cr.dictfetchone()
             if data:
-                if data[0].module:
-                    existing_external_id =  '%s.%s' % (data[0].module, data[0].name)
+                if data.get('module'):
+                    existing_external_id =  '%s.%s' % (data.get('module'), data.get('name'))
                 else:
-                    existing_external_id =  data[0].name
+                    existing_external_id =  data.get('name')
                 if existing_external_id!=external_id:
-                    data[0].unlink()
+                    self._cr.execute("delete from ir_model_data where id=%d"%(data.get('id')))
+                    #data[0].unlink()
                 else:
                     return existing_external_id 
             external_ids = external_id.split('.')
@@ -225,7 +239,7 @@ class ProductImportBatch(models.Model):
                 module = external_ids[0]
             else:
                 name = external_ids[0]
-                module = False
+                module = ''
             uid = self._uid
             #TO Faster add record directly executed query.
             self._cr.execute("""insert into ir_model_data(id,create_uid,create_date, write_date, write_uid, name, module, model, res_id) 

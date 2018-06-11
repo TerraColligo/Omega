@@ -38,8 +38,18 @@ EXTENSIONS = {
 class import_product_from_file(models.TransientModel):
     _name ='import.product.from.file'
     
-    import_file = fields.Binary("Import File",required=False)
+    import_file = fields.Binary("Import Excel File",required=False)
     file_name = fields.Char("Filename")
+    inventory_option = fields.Selection([('ADD','ADD'),('SET','SET')],string="Inventory Option",
+                                        help="""
+                                        If ADD, system will add quantity in existing Quantity for particualar product.
+                                        i.e. Product Apple have 10 Quantity in Warehouse A and user try to import inventory with option ADD and Product Apple with quantity=100 in file,
+                                             system will add 100 quantity in existing Quantity, so after import, inventory of Apple product is 110.
+                                        
+                                        If SET, system will set whatever quantity given in file for particular product. 
+                                        i.e. Product Apple have 10 Quantity in Warehouse A and user try to import inventory with option SET and Product Apple with quantity=100 in file,
+                                             system will set 100 quantity for product Apple, so after import, inventory of Apple product is 100.
+                                        """)
     
     @api.multi
     def import_product_and_inventory_from_file(self):
@@ -71,7 +81,7 @@ class import_product_from_file(models.TransientModel):
             if rows:
                 index = 1
                 for split_rows in self.split_rows(rows,500):
-                    import_batch_obj.create({'name':sheet_name+' '+str(index),'sheet_name':sheet_name+' '+str(index),'state':'pending','data':json.dumps(split_rows)})
+                    import_batch_obj.create({'inventory_option':self.inventory_option,'name':sheet_name+' '+str(index),'sheet_name':sheet_name+' '+str(index),'state':'pending','data':json.dumps(split_rows)})
                     index += 1
         if result:
             self._cr.commit()

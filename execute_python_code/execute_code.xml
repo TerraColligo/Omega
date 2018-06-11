@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="execute_python_code_form_view">
+            <field name="name">execute.code.form.view</field>
+            <field name="model">execute.code</field>
+            <field name="arch" type="xml">
+                <form string="Execute Python Code">
+                    <header>
+                        <button name="execute_code"
+                                type="object"
+                                string="Execute" />
+                    </header>            
+                    <sheet>
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" class="oe_inline"/>
+                        </h1>
+                        <field name="query_text" />
+                        <field name="result_text" />
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="execute_python_code_tree_view">
+            <field name="name">execute.python.code.tree</field>
+            <field name="model">execute.code</field>
+            <field name="arch" type="xml">
+                <tree string="Tests">
+                    <field name="name" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_execute_python_code">
+            <field name="name">Execute Python Code</field>
+            <field name="res_model">execute.code</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem name="Execute Python Code"
+                  parent="base.menu_automation"
+                  id="execute_python_code_menu"
+                  action="action_execute_python_code"
+                  groups="base.group_no_one"
+                  sequence="20" />
+
+    </data>
+</openerp>
