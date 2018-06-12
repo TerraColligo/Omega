@@ -161,25 +161,27 @@ class ProductImportBatch(models.Model):
                         location_id = location_id_dict.get(code)
                         if product_qty and type(product_qty) in [str,bytes]:
                             product_qty = safe_eval(product_qty)
-                        if location_id and product_qty not in [None,False,''] and product_qty>=0:
+                        if location_id and type(product_qty) in [float,int] and product_qty>=0: #and product_qty not in [None,False,'']
                             if location_id not in inventory_line_vals:
                                 inventory_line_vals.update({location_id:''})
-                            if location_id not in location_id_inventory_dict:
-                                inventory_rec = inventory_obj.create({
-                                                        'location_id':location_id,
-                                                        'filter':'partial',
-                                                        'name' : batch.name,
-                                                        })
-                                location_id_inventory_dict.update({location_id:inventory_rec.id})
+                            
                             #For faster create inventory.
-                            cr.execute("select sum(quantity) from stock_quant where company_id=%d and location_id=%d and product_id=%d"%(company_id, location_id_inventory_dict.get(location_id),product_exist.id))
+                            cr.execute("select sum(quantity) from stock_quant where company_id=%d and location_id=%d and product_id=%d"%(company_id, location_id,product_exist.id))
                             theoretical_qty = cr.fetchone()
                             theoretical_qty = theoretical_qty and theoretical_qty[0] or None
                             if theoretical_qty and inventory_option=='ADD':
                                 product_qty += theoretical_qty
-                            if theoretical_qty==None or theoretical_qty!=product_qty:
-                                if theoretical_qty==None:
-                                    theoretical_qty=0.0
+                            if theoretical_qty==None:
+                                #if theoretical_qty==None:
+                                theoretical_qty=0.0
+                            if theoretical_qty!=product_qty:
+                                if location_id not in location_id_inventory_dict:
+                                    inventory_rec = inventory_obj.create({
+                                                            'location_id':location_id,
+                                                            'filter':'partial',
+                                                            'name' : batch.name,
+                                                            })
+                                    location_id_inventory_dict.update({location_id:inventory_rec.id})
                                 line = "(nextval('stock_inventory_line_id_seq'),%d,(now() at time zone 'UTC'),%d,(now() at time zone 'UTC'),%f,%d,%d,%d,%d,%d,%f),"%(uid,uid, product_qty,location_id, company_id, location_id_inventory_dict.get(location_id), product_exist.id,product_exist.uom_id.id,theoretical_qty)    
                                 inventory_line_vals[location_id] += line
                             #inventory_line_vals[location_id].append({'product_id':product_exist.id, 'product_uom_id': product_exist.uom_id.id,'product_qty':product_qty, 'location_id':location_id})
