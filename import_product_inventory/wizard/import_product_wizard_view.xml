@@ -31,6 +31,7 @@
         	parent="stock.menu_stock_inventory_control"
         	name="Import Product"
         	action="action_import_purchase_order_from_xml_file"
+        	groups="import_product_inventory.group_import_product_inventory"
         	sequence="151"/>
     </data>
 </odoo>

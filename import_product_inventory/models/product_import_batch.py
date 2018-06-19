@@ -29,7 +29,6 @@ class ProductImportBatch(models.Model):
         ids = self.ids
         cr = self._cr
         product_columns = ['id','categ_id/name','name','barcode','default_code','unit_of_measurement','type','route_ids/id','purchase_ok','sale_ok','standard_price','lst_price','seller_ids/name/name']
-        ['WH','CP','SD','C1','C2','NA','AP','PI','IM','BC']
         category_mapping_dict = {}
         uom_mapping_dict = {}
         location_id_dict = {}

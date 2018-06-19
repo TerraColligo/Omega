@@ -9,6 +9,7 @@
  'website': '',
  'data': [
         'security/ir.model.access.csv',
+        'security/security.xml',
         'data/cron.xml',
         'views/product_import_batch_view.xml',
         'wizard/import_product_wizard_view.xml',

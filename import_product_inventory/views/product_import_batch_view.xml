@@ -52,6 +52,7 @@
         	parent="stock.menu_stock_inventory_control"
         	name="Product Import Batch"
         	action="action_view_product_import_batch"
+        	groups="import_product_inventory.group_import_product_inventory"
         	sequence="150"/>
     </data>
 </odoo>
