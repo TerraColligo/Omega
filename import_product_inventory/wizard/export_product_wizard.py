@@ -212,7 +212,7 @@ class export_product_with_inventory_file(models.TransientModel):
         )
         self.env['ir.model.data'].invalidate_cache(fnames=fields)
 
-        return (
+        return list(
             (record.id, to_xid(record.id))
             for record in records
         )
