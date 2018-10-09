@@ -9,8 +9,12 @@
                 <notebook position="inside">
                     <page string="Commission" name="commission">
                         <group>
+	                	<field name="comm_per" class="oe_inline"/>
+                        </group>
+                    </page>
+		    <page string="Sales Agent" name="sales_agent">
+                        <group>
 	                        <field name="sale_repr_id" class="oe_inline"/>
-	                        <field name="comm_per" class="oe_inline"/>
                         </group>
                     </page>
                 </notebook>
@@ -40,7 +44,7 @@
                 </field>
                 <field name="user_id" position="after">
                     <field name="sale_repr_id"/>
-                    <field name="commission_amount"/>
+                    <field name="commission_amount" sum="Total Commission"/>
                 </field>
             </field>
         </record>
@@ -56,7 +60,7 @@
                 </field>
                 <field name="user_id" position="after">
                     <field name="sale_repr_id"/>
-                    <field name="commission_amount"/>
+                    <field name="commission_amount" sum="Total Commission"/>
                 </field>
             </field>
         </record>

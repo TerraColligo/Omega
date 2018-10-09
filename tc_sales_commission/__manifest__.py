@@ -7,9 +7,9 @@
     'summary': 'This module allow user to give the Sales Commission.',
     'description': """This module allow user to give the Sales Commission.""",
     'depends': ['sale_management'],
-    'author': "Terra Colligo",
+    'author': "",
     'license': 'AGPL-3',
-    'website': 'http://www.terracolligo.com/',
+    'website': '',
     'data': [
              'view/sale_view.xml',
              ],

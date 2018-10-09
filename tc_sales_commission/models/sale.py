@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
@@ -27,8 +26,8 @@ class sale_order(models.Model):
             order.commission_amount = comm_amount
 
     sale_repr_id = fields.Many2one('res.partner', string="Agent")
-    comm_per = fields.Float(string="Percentage")
-    commission_amount = fields.Monetary(string="Commission", compute="_get_total_commission_amount", store=True)
+    comm_per = fields.Float(string="Percentage",default=0.0)
+    commission_amount = fields.Monetary(string="Commission", compute="_get_total_commission_amount")
 
     @api.one
     @api.constrains('comm_per')
@@ -45,4 +44,7 @@ class sale_order(models.Model):
             self.sale_repr_id = self.partner_id.sale_repr_id
             self.comm_per = self.partner_id.comm_per or 0.0
 
-
+    @api.onchange('sale_repr_id')
+    def onchange_agent(self):
+        self.comm_per = self.sale_repr_id.comm_per or 0.0
+    
