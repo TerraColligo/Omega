@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<record id="import_purchase_order_log_tree_view" model="ir.ui.view">
+		<field name="name">Import Purchase Order Log</field>
+		<field name="model">import.orders.mismatch.log</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+			<tree string="Import Sale Order Log">
+				<field name="name" required="True" />
+				<field name="log_date" />
+				<field name="message" />
+				<field name="company_id" />
+				<field name="type" readonly="True"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="import_purchase_order_process_log_form_view" model="ir.ui.view">
+		<field name="name">Purchase Order Process Log Form View</field>
+		<field name="model">import.orders.mismatch.log</field>
+		<field name="type">form</field>
+		<field name="arch" type="xml">
+			<form string="Import Purchase Order log">
+				<sheet>
+					<group>
+						<group>
+							<field name="name" required="True" copy='False' readonly="True" />
+							<field name="log_date" readonly="True" />
+							<field name="type" readonly="True"/>
+						</group>
+						<group>
+							<field name="message" readonly="True" />
+							<field name="company_id" readonly="True"/>
+						</group>
+					</group>
+					<group string='Logs'>
+						<field name="transaction_line_ids" nolabel='1' readonly="True">
+							<tree>
+								<field name="message" readonly="True" />
+							</tree>
+						</field>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+	<record id="action_import_purchase_order_process_log" model="ir.actions.act_window">
+		<field name="name">Import Purchase Order Process Log</field>
+		<field name="res_model">import.orders.mismatch.log</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+		<field name="view_id" ref="import_purchase_order_log_tree_view" />
+	</record>
+    <menuitem id="import_purchase_order_menuitem_log_book" name="Mismatch Log"
+             parent="purchase.menu_purchase_root" groups="purchase.group_purchase_manager,purchase.group_purchase_user" sequence="10"/>
+
+    <menuitem id="import_order_transaction_process_log_ept" name="Mismatch Purchase Order Log"
+              parent="import_purchase_order_menuitem_log_book" sequence="11"
+              action="action_import_purchase_order_process_log" groups="purchase.group_purchase_manager,purchase.group_purchase_user"/>
+</odoo>

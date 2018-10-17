@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="view_export_purchase_order_to_xls" model="ir.ui.view">
+			<field name="name">Export Purchase Order</field>
+			<field name="model">tc.export.purchase.order</field>
+			<field name="arch" type="xml">
+				<form string="Export Purchase Order" style="height: 200px">
+					<group>
+						<html>
+							<p class="oe_account_font_help"
+								style="color: red;border-top: 2px solid;border-bottom: 2px solid;"
+								align="center">
+							Click on "Export Purchase Order" button to export the Selected Purchase order's
+							</p>
+						</html>
+					</group>
+					<newline />
+					<div>
+						<p style="color:red;">
+							<ul>
+								<li>Note : Export Only Draft Purchase Order </li>
+							</ul>
+						</p>
+					</div>
+					<footer>
+						<button name="export_purchased_stock_to_xls" string="Export Purchased Order To XLS"
+							type="object" class="oe_highlight" />
+						or
+						<button string="Close" special='cancel' type="object"
+							class="oe_highlight" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<act_window id="action_purchase_order_export_to_xls_ept"
+			name="Export Purchase Order To XLS" src_model="purchase.order"
+			res_model="tc.export.purchase.order" target="new" key2="client_action_multi"
+			view_mode='form' view_type='form' view_id='view_export_purchase_order_to_xls'
+			groups='purchase.group_purchase_manager' />
+	</data>
+</odoo>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>	
+	<data noupdate="1">
+        <record id="seq_import_purchase_order_mismatch_job" model="ir.sequence">
+            <field name="name">Import Orders Process Job Sequence</field>
+            <field name="code">import.orders.process.log</field>
+            <field name="padding">5</field>
+            <field name="prefix">JOB</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

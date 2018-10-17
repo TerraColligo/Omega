@@ -1,0 +1,5 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_import_order_mismatch_log,Access import order mismatch log,tc_po_export_import.model_import_orders_mismatch_log_line,purchase.group_purchase_manager,TRUE,TRUE,FALSE,FALSE
+access_import_order_mismatch_log_line,Access import order mismatch log line,tc_po_export_import.model_import_orders_mismatch_log,purchase.group_purchase_manager,TRUE,TRUE,FALSE,FALSE
+access_import_order_mismatch_log_user,Access import order mismatch log user,tc_po_export_import.model_import_orders_mismatch_log_line,purchase.group_purchase_user,TRUE,FALSE,FALSE,FALSE
+access_import_order_mismatch_log_line_user,Acess import order mismatch log line user,tc_po_export_import.model_import_orders_mismatch_log,purchase.group_purchase_user,TRUE,FALSE,FALSE,FALSE

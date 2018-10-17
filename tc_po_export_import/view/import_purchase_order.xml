@@ -1,0 +1,60 @@
+<odoo>
+	<data>
+		<record id="import_tc_purchase_orders_from_xls_form_view"
+			model="ir.ui.view">
+			<field name="name">import.tc.purchase.orders.from.xls.form.view
+			</field>
+			<field name="model">tc.import.purchase.order.xls</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Import Purchase Order">
+					<sheet>
+						<group colspan="4">
+							<html>
+								<p class="oe_account_font_help"
+									style="color: red;border-top: 2px solid;border-bottom: 2px solid;"
+									align="center">
+									Please provide only '.xls' formatted file, If any issue
+									regards
+									import then check log at
+									<b>"Purchase > Mismatch Log > Mismatch Purchase Order Log"</b>
+
+								</p>
+							</html>
+						</group>
+						<group col="2">
+							<field name="choose_file" filename="file_name" />
+							<field name="file_name" invisible="1" />
+						</group>
+						<newline />
+						<div>
+							<p style="color:red;">
+								<ul>
+									<li>Note : At a time Only Import One RFQ </li>
+								</ul>
+							</p>
+						</div>
+						<footer>
+							<button name="tc_import_purchase_order" string="Import Purchase Order"
+								type="object" class="oe_highlight" />
+							<button string="_Close" class="oe_link" special="cancel" />
+						</footer>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record id="import_purchase_order_from_xls_window_action"
+			model="ir.actions.act_window">
+			<field name="name">Import Purchase Order</field>
+			<field name="res_model">tc.import.purchase.order.xls</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="import_tc_purchase_orders_from_xls_form_view" />
+			<field name="target">new</field>
+		</record>
+		<menuitem name="Import Purchase Order" id="import_po_order_from_xls_menu_items_id"
+			action="import_purchase_order_from_xls_window_action" parent="purchase.menu_procurement_management"
+			groups="purchase.group_purchase_manager" sequence="9" />
+
+	</data>
+</odoo>
