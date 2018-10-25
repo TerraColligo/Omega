@@ -13,7 +13,8 @@
                         </group>
                     </page>
 		    <page string="Sales Agent" name="sales_agent">
-                        <group>
+                        <group cols="4">
+                         	<field name="sale_commission_apply" />
 	                        <field name="sale_repr_id" class="oe_inline"/>
                         </group>
                     </page>
@@ -27,6 +28,7 @@
             <field name="arch" type="xml">
                 <field name="partner_id" position="after">
                     <field name="sale_repr_id" class="oe_inline"/>
+                    <field name="sale_commission_apply" />
                     <field name="comm_per" class="oe_inline"/>
                     <field name="commission_amount"/>
                 </field>
