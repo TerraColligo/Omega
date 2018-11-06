@@ -2,14 +2,14 @@
 
 {
     'name': 'Sales Commission',
-    'version': '11.0.1.31.10.18',
+    'version': '11.0.11.3.18',
     'category': 'Sale',
     'summary': 'This module allow user to give the Sales Commission.',
     'description': """This module allow user to give the Sales Commission.""",
     'depends': ['base','sale_management'],
     'author': "Terra Colligo",
     'license': 'AGPL-3',
-    'website': '',
+    'website': 'http://www.terracolligo.com',
     'data': [
              'view/sale_view.xml',
              ],

@@ -30,6 +30,7 @@
                     <field name="sale_commission_apply" />
                     <field name="comm_per" class="oe_inline"/>
                     <field name="commission_amount"/>
+                    <field name="potential_commission_amount"/>
                 </field>
             </field>
         </record>
@@ -45,7 +46,7 @@
                 </field>
                 <field name="user_id" position="after">
                     <field name="sale_repr_id"/>
-                    <field name="commission_amount" sum="Total Commission"/>
+                    <field name="commission_amount"  sum="Total Commission"  widget="monetary"/>
                 </field>
             </field>
         </record>
