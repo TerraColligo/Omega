@@ -24,17 +24,23 @@ class sale_order(models.Model):
         for order in self:
             amount = 0.0
             total_amount = 0.0
+            refund_amount = 0.0
             comm_amount = 0.0
             if order.invoice_ids:
                 if order.sale_commission_apply == 'invoiced':
-                    invoice_ids = order.invoice_ids.filtered(lambda ai:ai.state in ('draft','open','paid'))
+                    invoice_ids = order.invoice_ids.filtered(lambda ai:ai.state in ('draft','open','paid') and not ai.type=='out_refund')
                 elif order.sale_commission_apply == 'paid':
-                    invoice_ids = order.invoice_ids.filtered(lambda ai:ai.state=='paid')
+                    invoice_ids = order.invoice_ids.filtered(lambda ai:ai.state=='paid' and not ai.type=='out_refund')
                 else:
                     invoice_ids = order.invoice_ids
                 for inv in invoice_ids:
                     amount += inv.amount_untaxed
                 total_amount = amount
+                invoice_ids = order.invoice_ids.filtered(lambda ai:ai.type=='out_refund')
+                if invoice_ids:
+                    for inv in invoice_ids:
+                        refund_amount+=inv.amount_untaxed
+                    total_amount = total_amount - refund_amount
                 comm_amount = (total_amount * order.comm_per) / 100
             order.commission_amount = comm_amount
         
@@ -44,7 +50,8 @@ class sale_order(models.Model):
         for order in self:
             total_amount = order.amount_untaxed
             comm_amount = (total_amount * order.comm_per) / 100
-            order.potential_commission_amount = comm_amount
+            if order.state == 'cancel':
+                order.potential_commission_amount = 0.0
 
     sale_repr_id = fields.Many2one('res.partner', string="Agent")
     comm_per = fields.Float(string="Percentage",default=0.0)

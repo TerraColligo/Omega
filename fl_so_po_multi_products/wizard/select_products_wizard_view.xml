@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <form string="Select Products">
                 <group string="Products">
-                    <field name="product_ids" nolabel="1" />
+                    <field name="product_ids" nolabel="1"  />
                 </group>
                 <footer>
                     <button name="select_products" string="Add" type="object" class="oe_highlight" />

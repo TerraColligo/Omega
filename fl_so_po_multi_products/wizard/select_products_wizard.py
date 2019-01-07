@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
-
 from odoo import models, fields, api
 
-
 class SelectProducts(models.TransientModel):
-
     _name = 'select.products'
 
     product_ids = fields.Many2many('product.product', string='Products')
