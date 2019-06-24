@@ -1,5 +1,5 @@
 {'name': 'Import product in Batch',
- 'version': '11.3.21.6.2019',
+ 'version': '11.3.24.6.2019',
  'category': 'other',
  'depends': ['l10n_mx','l10n_mx_edi','sale_stock','purchase','point_of_sale'],
  'author': "Terra Colligo",
