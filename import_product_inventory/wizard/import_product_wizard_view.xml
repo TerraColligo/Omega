@@ -7,7 +7,7 @@
             <field name="arch" type="xml">
                 <form string="Import Product from file">
                 	<group>
-                		<field name="import_file" required="1" filename="file_name" accept='.xls'/>
+                		<field name="import_file" required="1" filename="file_name" accept='.xls, .xlsx'/>
                 		<field name="file_name" invisible="1"/>
                 		<field name="inventory_option" required="1"/>
                 	</group>

@@ -12,25 +12,25 @@ import base64
 #     import xlsxwriter
 # except ImportError:
 #     xlsxwriter = None
-    
+
 class export_product_with_inventory_file(models.TransientModel):
     _name ='export.product.with.inventory.file'
-    
+
     file_data = fields.Binary("File Data")
-        
+
     @api.multi
     def export_products(self):
-        
+
 #         if xlsxwriter==None:
 #             raise Warning(_("Unable to load Python module \"{modname}\" \n Install it by command : sudo pip install xlsxwriter").format(modname='xlsxwriter'))
 
         #fp = StringIO()
         #workbook = xlsxwriter.Workbook(fp, {'in_memory': True})
-        
+
         filename = 'products_%s.xls'%(datetime.today().strftime("%Y_%m_%d_%H_%M_%S"))
         workbook = xlwt.Workbook()
         bold = xlwt.easyxf("font: bold on;")
-        
+
 #         header_format_without_color = workbook.add_format({
 #             'border': 1,
 #             'bold': True,
@@ -39,13 +39,13 @@ class export_product_with_inventory_file(models.TransientModel):
 #             'indent': 1,
 #         })
         quant_obj = self.env['stock.quant']
-        products = self.env['product.product'].search([])
+        products = self.env['product.product'].sudo().search(['|', ('active', '=', False), ('active', '=', True)])
         company_id = self.env.user.company_id.id
-        
+
         #worksheet = workbook.add_worksheet('Products')
         worksheet = workbook.add_sheet('Products')
-        
-        headers = ['id','categ_id/name','name','barcode','default_code','unit_of_measurement','type','route_ids/id','purchase_ok','sale_ok','standard_price','lst_price','seller_ids/name/name']
+
+        headers = ['id','active','invoice_policy','purchase_method','categ_id/name','pos_categ_id/name','available_in_pos','name','barcode','default_code','unit_of_measurement','uom_po_id','l10n_mx_edi_code_sat_id','supplier_taxes_id','taxes_id','type','route_ids/id','purchase_ok','sale_ok','standard_price','lst_price','seller_ids/name/name','image_medium']
         warehouse_ids = []
         product_obj = self.env['product.product']
         product_ids = products.ids
@@ -58,19 +58,19 @@ class export_product_with_inventory_file(models.TransientModel):
             query = quant_obj._where_calc(domain_quant)
             from_clause, where_clause, where_clause_params = query.get_sql()
             where_str = where_clause and (" WHERE %s" % where_clause) or ''
-            
+
             query_str = 'SELECT product_id, sum(quantity) as quantity FROM '+ from_clause + where_str + ' group by product_id'
             self._cr.execute(query_str, where_clause_params)
             res = dict(self._cr.fetchall())
             product_inventory_by_wh.update({warehouse.id:res})
             warehouse_ids.append(warehouse.id)
-            
+
         product_xml_ids = dict(self.__ensure_xml_id_custom(products))
         sellers_mapping_dict = {}
         for i,header in enumerate(headers):
             worksheet.write(0, i, header, bold)
             worksheet.col(i).width = 8000 # around 220 pixels
-        
+
         def splittor(rs):
             """ Splits the self recordset in batches of 1000 (to avoid
             entire-recordset-prefetch-effects) & removes the previous batch
@@ -81,18 +81,54 @@ class export_product_with_inventory_file(models.TransientModel):
                 for rec in sub:
                     yield rec
                 rs.invalidate_cache(ids=sub.ids)
-        row_index = 1 
+        row_index = 1
+        pos_installed = hasattr(self.env['product.product'], 'available_in_pos')
         for product in splittor(products):
             if product.route_ids:
                 xml_ids = [xid for _, xid in self.__ensure_xml_id_custom(product.route_ids)]
                 route_ids = ','.join(xml_ids) or False
             else:
                 route_ids=''
+            if product.supplier_taxes_id:
+                # xml_ids = [xid for _, xid in self.__ensure_xml_id_custom(product.supplier_taxes_id)]
+                # supplier_taxes_ids = ','.join(xml_ids) or False
+                supplier_taxes_ids = ','.join([tax.name for tax in product.supplier_taxes_id])
+            else:
+                supplier_taxes_ids = ''
+            if product.taxes_id:
+                # xml_ids = [xid for _, xid in self.__ensure_xml_id_custom(product.taxes_id)]
+                # customer_taxes_ids = ','.join(xml_ids) or False
+                customer_taxes_ids = ','.join([tax.name for tax in product.taxes_id])
+            else:
+                customer_taxes_ids = ''
+            if product.l10n_mx_edi_code_sat_id:
+                xml_ids = [xid for _, xid in self.__ensure_xml_id_custom(product.l10n_mx_edi_code_sat_id)]
+                l10n_mx_edi_code_sat_id = ','.join(xml_ids) or False
+            else:
+                l10n_mx_edi_code_sat_id = ''
             i=0
             worksheet.write(row_index, i, product_xml_ids.get(product.id))
             i +=1
+            worksheet.write(row_index, i, product.active)
+            i +=1
+            worksheet.write(row_index, i, product.invoice_policy)
+            i +=1
+            worksheet.write(row_index, i, product.purchase_method)
+            i +=1
             worksheet.write(row_index, i, product.categ_id.name)
             i +=1
+            #########
+            if pos_installed:
+                worksheet.write(row_index, i, product.pos_categ_id.complete_categ_name or None)
+                i +=1
+                worksheet.write(row_index, i, 1 if product.available_in_pos else 0)
+                i +=1
+            else:
+                worksheet.write(row_index, i, None)
+                i +=1
+                worksheet.write(row_index, i, None)
+                i +=1
+            #########
             worksheet.write(row_index, i, product.name)
             i +=1
             worksheet.write(row_index, i, product.barcode or '')
@@ -100,6 +136,14 @@ class export_product_with_inventory_file(models.TransientModel):
             worksheet.write(row_index, i, product.default_code or '')
             i +=1
             worksheet.write(row_index, i, product.uom_id.name)
+            i +=1
+            worksheet.write(row_index, i, product.uom_po_id.name)
+            i +=1
+            worksheet.write(row_index, i, product.l10n_mx_edi_code_sat_id.code)
+            i +=1
+            worksheet.write(row_index, i, supplier_taxes_ids)
+            i +=1
+            worksheet.write(row_index, i, customer_taxes_ids)
             i +=1
             worksheet.write(row_index, i, product.type)
             i +=1
@@ -119,10 +163,11 @@ class export_product_with_inventory_file(models.TransientModel):
                     xml_rec = self.__ensure_xml_id_custom(seller)
                     sellers_mapping_dict.update({seller.id: xml_rec and xml_rec[0][1] or False})
                 seller_xml_ids.append(sellers_mapping_dict.get(seller.id) or '')
-            
+
             worksheet.write(row_index, i, ','.join(seller_xml_ids))
             i +=1
-            
+            worksheet.write(row_index, i, None)
+            i +=1
             for warehouse_id in warehouse_ids:
                 worksheet.write(row_index, i, product_inventory_by_wh[warehouse_id].get(product.id,0.0))
                 #worksheet.write(row_index, i, product.with_context(warehouse=warehouse_id).qty_available)
@@ -132,42 +177,42 @@ class export_product_with_inventory_file(models.TransientModel):
 #         fp.seek(0)
 #         data = fp.read()
 #         fp.close()
-        
+
         fp = io.BytesIO()
         workbook.save(fp)
         fp.seek(0)
         data = fp.read()
         fp.close()
-        
+
         self.write({'file_data':base64.b64encode(data)})
         return {
             'type' : 'ir.actions.act_url',
             'url':   '/web/binary/savefile_custom?model=%s&field=file_data&id=%s&file_name=%s&content_type="application/vnd.ms-excel"' % (self._name, self.id,filename),
             'target':'self',
             }
-        
+
     def __ensure_xml_id_custom(self, records):
         """ Create missing external ids for records in ``self``, and return an
             iterator of pairs ``(record, xmlid)`` for the records in ``self``.
 
         :rtype: Iterable[Model, str | None]
         """
-        
+
         if not records:
             return iter([])
         modname = '__export__'
 
         cr = self.env.cr
         cr.execute("""
-            SELECT res_id, CASE WHEN length(module)>0 THEN module || '.' || name ELSE name END AS external_id   
+            SELECT res_id, CASE WHEN length(module)>0 THEN module || '.' || name ELSE name END AS external_id
             FROM ir_model_data
             WHERE model = %s AND res_id in %s
         """, (records._name, tuple(records.ids)))
-        
+
         result = cr.fetchall()
         if len(result)==len(records):
             return result
-        
+
         cr.execute("""
             SELECT res_id, module, name
             FROM ir_model_data
@@ -212,7 +257,7 @@ class export_product_with_inventory_file(models.TransientModel):
         )
         self.env['ir.model.data'].invalidate_cache(fnames=fields)
 
-        return list(
+        return (
             (record.id, to_xid(record.id))
             for record in records
         )

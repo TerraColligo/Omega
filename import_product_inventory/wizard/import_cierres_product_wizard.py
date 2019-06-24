@@ -35,12 +35,12 @@ EXTENSIONS = {
     '.' + ext: handler
     for mime, (ext, handler, req) in FILE_TYPE_DICT.items()
 }
-class import_product_from_file(models.TransientModel):
-    _name ='import.product.from.file'
+class import_product_from_cierres_file(models.TransientModel):
+    _name ='import.product.from.cierres.file'
 
     import_file = fields.Binary("Import Excel File",required=False)
     file_name = fields.Char("Filename")
-    inventory_option = fields.Selection([('ADD','ADD'),('SET','SET'),('archive','Archive'),('archive_rename','Archive & Rename')],string="Inventory Option",
+    inventory_option = fields.Selection([('ADD','ADD'),('SET','SET')],string="Inventory Option",
                                         help="""
                                         If ADD, system will add quantity in existing Quantity for particualar product.
                                         i.e. Product Apple have 10 Quantity in Warehouse A and user try to import inventory with option ADD and Product Apple with quantity=100 in file,
@@ -76,7 +76,7 @@ class import_product_from_file(models.TransientModel):
         if not result and req:
             raise Warning(_("Unable to load \"{extension}\" file: requires Python module \"{modname}\"").format(extension=file_extension, modname=req))
 
-        import_batch_obj = self.env['product.import.batch']
+        import_batch_obj = self.env['product.cierres.import.batch']
         for sheet_name,rows in result:
             if rows:
                 index = 1

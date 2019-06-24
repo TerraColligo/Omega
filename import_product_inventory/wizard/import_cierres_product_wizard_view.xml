@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_import_cierres_product_inventory_from_file_form" model="ir.ui.view">
+            <field name="name">Import Product form</field>
+            <field name="model">import.product.from.cierres.file</field>
+            <field name="arch" type="xml">
+                <form string="Import Product from file">
+                    <group>
+                        <field name="import_file" required="1" filename="file_name" accept='.xls, .xlsx'/>
+                        <field name="file_name" invisible="1"/>
+                        <field name="inventory_option" required="1"/>
+                    </group>
+                    <footer>
+                        <button name="import_product_and_inventory_from_file" string="Import" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_highlight" special="cancel" />
+                    </footer>
+               </form>
+            </field>
+        </record>
+
+        <record id="action_import_cierres_purchase_order_from_xml_file" model="ir.actions.act_window">
+            <field name="name">Import Cierres</field>
+            <field name="res_model">import.product.from.cierres.file</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+         </record>
+
+        <!-- <menuitem id="main_action_cierries_import_purchase_order_from_xml_file"
+            parent="stock.menu_stock_inventory_control"
+            name="Import Cierres"
+            action="action_import_cierres_purchase_order_from_xml_file"
+            groups="import_product_inventory.group_import_product_inventory"
+            sequence="151"/> -->
+    </data>
+</odoo>
