@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_export_partner_to_file_form" model="ir.ui.view">
+        <field name="name">Export Contact form</field>
+        <field name="model">export.partner.with.file</field>
+        <field name="arch" type="xml">
+            <form string="Export Contact to file">
+                <group>
+                    <field name="file_data" invisible="1"/>
+                </group>
+                <footer>
+                    <button name="export_partners" string="Export" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_highlight" special="cancel" />
+                </footer>
+           </form>
+        </field>
+    </record>
+
+    <record id="action_export_partner_to_file" model="ir.actions.act_window">
+        <field name="name">Export Contact</field>
+        <field name="res_model">export.partner.with.file</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+     </record>
+
+    <menuitem id="main_action_export_partner_to_file"
+        parent="contacts.menu_contacts"
+        name="Export Contact"
+        action="action_export_partner_to_file"
+        sequence="2"/>
+
+</odoo>
