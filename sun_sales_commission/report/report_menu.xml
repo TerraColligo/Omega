@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+	<data>
+			
+		 <menuitem id="sale_commission_report_ecs_menuitem_id" name="Sale Commission"
+			parent="sale.menu_sale_report" action="action_sale_commission_report_ecs"
+			sequence="30" />	
+	</data>
+</odoo>

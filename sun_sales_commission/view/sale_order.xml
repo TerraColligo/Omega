@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="sale_order_commission_form_view_ecs" model="ir.ui.view">
+			<field name="model">sale.order</field>
+			<field name="inherit_id" ref="sale.view_order_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//notebook/page[2]" position="after">
+					<page string='Sales Commission Configuration' name='sale_commission_config'>
+						<group>
+							<field name="sale_agent_id" class="oe_inline"
+								domain="[('is_sale_agent','=',True)]" />
+							<field name="comm_per" class="oe_inline" />
+						</group>
+						<group>
+							<field name="commission_amount" />
+							<field name="potential_commission_amount" />
+						</group>
+					</page>
+				</xpath>
+			</field>
+		</record>
+		<record id="sale_commission_record_tree_view_ecs" model="ir.ui.view">
+			<field name="name">sale.commission.record.tree.view.ecs</field>
+			<field name="model">sale.order</field>
+			<field name="inherit_id" ref="sale.view_order_tree" />
+			<field name="arch" type="xml">
+				<field name="user_id" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</field>
+				<field name="user_id" position="after">
+					<field name="sale_agent_id" />
+					<field name="commission_amount" sum="Total Commission" />
+				</field>
+			</field>
+		</record>
+	</data>
+</odoo>

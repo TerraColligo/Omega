@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="res_partner_sales_commission_form_ecs" model="ir.ui.view">
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="base.view_partner_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//notebook/page[@name='sales_purchases']/group/group[@name='sale']" position="inside">
+						<field name="is_sale_agent"  string="Sales Agent"/>
+						<field name="commission_per" class="oe_inline"  attrs="{'invisible':[('is_sale_agent','=',False)]}"/>
+				</xpath>
+				<notebook position="inside">
+					<page string="Sales Commission Configuration"  name="sale_commission_config" attrs="{'invisible':[('is_sale_agent','=',True)]}">
+						<group>
+						   <field name="is_sale_agent"  invisible="1"/>		
+							<field name="sale_agent_id" domain="[('is_sale_agent','=',True)]" />
+						</group>
+					</page>
+				</notebook>
+			</field>
+		</record>
+		<record id="action_sales_commission_agent_ecs_menu_action" model="ir.actions.act_window">
+			<field name="name">Sales Agent</field>
+			<field name="res_model">res.partner</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="domain">[('is_sale_agent','=',True)]</field>
+		</record>
+		<menuitem id="sales_commission_agent_ecs_menu" name="Sales Agent"
+			parent="sale.sale_order_menu" sequence="90"
+			action="action_sales_commission_agent_ecs_menu_action" 
+			groups="sales_team.group_sale_manager"/>
+	</data>
+</odoo>
