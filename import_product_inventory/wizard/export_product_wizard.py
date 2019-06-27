@@ -120,6 +120,7 @@ class export_product_with_inventory_file(models.TransientModel):
             i +=1
             worksheet.write(row_index, i, product.categ_id.name)
             i +=1
+            #########
             if pos_installed:
                 worksheet.write(row_index, i, product.pos_categ_id.complete_categ_name or None)
                 i +=1
@@ -130,6 +131,7 @@ class export_product_with_inventory_file(models.TransientModel):
                 i +=1
                 worksheet.write(row_index, i, None)
                 i +=1
+            #########
             worksheet.write(row_index, i, product.name)
             i +=1
             worksheet.write(row_index, i, product.barcode or '')

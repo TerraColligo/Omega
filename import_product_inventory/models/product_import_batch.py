@@ -2,16 +2,15 @@
 from odoo import models,fields, api, tools
 import json
 import logging
-from psycopg2 import IntegrityError
 try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse
 import base64
 import requests
+from psycopg2 import IntegrityError
 from odoo.tools.safe_eval import safe_eval
 _logger = logging.getLogger(__name__)
-
 
 
 class ProductImportBatch(models.Model):
@@ -29,7 +28,7 @@ class ProductImportBatch(models.Model):
     def action_import_product_data(self):
         product_obj = self.env['product.product']
         category_obj = self.env['product.category']
-        uom_obj = self.env['uom.uom']
+        uom_obj = self.env['product.uom']
         warehouse_obj = self.env['stock.warehouse']
         inventory_obj = self.env['stock.inventory']
         pos_category_obj = self.env['pos.category']
@@ -41,7 +40,7 @@ class ProductImportBatch(models.Model):
         #To manange savepoiunt, we used ids instead of direct browsable record.
         ids = self.ids
         cr = self._cr
-        product_columns = ['id','Archive','invoice_policy','purchase_method','categ_id/name', 'pos_categ_id/name', 'available_in_pos', 'name','barcode','default_code','unit_of_measurement','uom_po_id','l10n_mx_edi_code_sat_id','supplier_taxes_id','taxes_id','type','route_ids/id','purchase_ok','sale_ok','standard_price','lst_price','seller_ids/name/name', 'image_medium']
+        product_columns = ['id','Archive','invoice_policy','purchase_method','categ_id/name','pos_categ_id/name','available_in_pos','name','barcode','default_code','unit_of_measurement','uom_po_id','l10n_mx_edi_code_sat_id','supplier_taxes_id','taxes_id','type','route_ids/id','purchase_ok','sale_ok','standard_price','lst_price','seller_ids/name/name','image_medium']
         category_mapping_dict = {}
         uom_mapping_dict = {}
         po_uom_mapping_dict = {}
@@ -73,8 +72,8 @@ class ProductImportBatch(models.Model):
                     available_in_pos = product.get('available_in_pos')
                     invoice_policy = product.get('invoice_policy')
                     purchase_method = product.get('purchase_method')
-                    image_medium = product.get('image_medium')
                     uom_name = product.get('unit_of_measurement')
+                    image_medium = product.get('image_medium')
                     uom_po_name = product.get('uom_po_id')
                     sat_id = product.get('l10n_mx_edi_code_sat_id')
                     supplier_taxes = product.get('supplier_taxes_id')
@@ -238,7 +237,7 @@ class ProductImportBatch(models.Model):
                         'lst_price' : lst_price,
                         'available_in_pos' : available_in_pos,
                         'invoice_policy': invoice_policy,
-                        'purchase_method': purchase_method
+                        'purchase_method': purchase_method,
                         }
                     if image_medium:
                         parsed_url = urlparse(image_medium)
@@ -278,7 +277,8 @@ class ProductImportBatch(models.Model):
                     if external_id:
                         product_exist = self.env.ref(external_id,False)
                     if not product_exist and default_code:
-                        product_exist = product_obj.sudo().search(['|', ('active', '=', False), ('active', '=', True), ('default_code','=',default_code)],limit=1)
+                        product_exist = product_obj.sudo().search(['|', ('active', '=', False), ('active', '=', True), ('default_code','=',default_code), ('default_code','=',default_code)],limit=1)
+
                     try:
                         cr.execute('SAVEPOINT model_batch_product_save')
                         if product_exist:
