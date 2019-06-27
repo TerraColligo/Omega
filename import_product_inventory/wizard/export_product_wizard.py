@@ -39,13 +39,13 @@ class export_product_with_inventory_file(models.TransientModel):
 #             'indent': 1,
 #         })
         quant_obj = self.env['stock.quant']
-        products = self.env['product.product'].sudo().search(['|', ('active', '=', False), ('active', '=', True)])
+        products = self.env['product.product'].sudo().search(['|', ('active', '=', True), ('active', '=', False)])
         company_id = self.env.user.company_id.id
 
         #worksheet = workbook.add_worksheet('Products')
         worksheet = workbook.add_sheet('Products')
 
-        headers = ['id','active','invoice_policy','purchase_method','categ_id/name','pos_categ_id/name','available_in_pos','name','barcode','default_code','unit_of_measurement','uom_po_id','l10n_mx_edi_code_sat_id','supplier_taxes_id','taxes_id','type','route_ids/id','purchase_ok','sale_ok','standard_price','lst_price','seller_ids/name/name','image_medium']
+        headers = ['id','Archive','invoice_policy','purchase_method','categ_id/name','pos_categ_id/name','available_in_pos','name','barcode','default_code','unit_of_measurement','uom_po_id','l10n_mx_edi_code_sat_id','supplier_taxes_id','taxes_id','type','route_ids/id','purchase_ok','sale_ok','standard_price','lst_price','seller_ids/name/name','image_medium']
         warehouse_ids = []
         product_obj = self.env['product.product']
         product_ids = products.ids
@@ -109,7 +109,10 @@ class export_product_with_inventory_file(models.TransientModel):
             i=0
             worksheet.write(row_index, i, product_xml_ids.get(product.id))
             i +=1
-            worksheet.write(row_index, i, product.active)
+            if product.active:
+                worksheet.write(row_index, i, 0)
+            else:
+                worksheet.write(row_index, i, 1)
             i +=1
             worksheet.write(row_index, i, product.invoice_policy)
             i +=1
@@ -117,7 +120,6 @@ class export_product_with_inventory_file(models.TransientModel):
             i +=1
             worksheet.write(row_index, i, product.categ_id.name)
             i +=1
-            #########
             if pos_installed:
                 worksheet.write(row_index, i, product.pos_categ_id.complete_categ_name or None)
                 i +=1
@@ -128,7 +130,6 @@ class export_product_with_inventory_file(models.TransientModel):
                 i +=1
                 worksheet.write(row_index, i, None)
                 i +=1
-            #########
             worksheet.write(row_index, i, product.name)
             i +=1
             worksheet.write(row_index, i, product.barcode or '')
