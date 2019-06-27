@@ -2,7 +2,7 @@
 
 {
     'name': 'Sales Commission',
-    'version': '11.5.27.6.2019,
+    'version': '11.5.27.6.2019',
     'category': 'Sale',
     'summary': 'This module allow user to give the Sales Commission.',
     'description': """This module allow user to give the Sales Commission.""",
@@ -11,7 +11,6 @@
     'license': 'AGPL-3',
     'website': 'http://www.terracolligo.com',
     'data': [
-             'security/ir.model.access.csv',
              'view/sale_view.xml',
              ],
     'installable': True,
