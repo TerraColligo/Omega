@@ -1,0 +1,56 @@
+Batch import-export application, user manual
+
+Version 29.6.2019. Written by Ossi Mäntylahti, Terra Colligo
+
+Batch import-export application is used to export and import Odoo products in a batch. The program addresses several shortcomings that Odoo's basic product import-export functionality lacks. Key features are following:
+
+- The program supports more than 500 lines. To bypass this restriction, the application breaks import in several max 500 lines batches and the processes all of them.
+- Updating quantities of products. Odoo's basic import-export does not support setting quantities. This one does. To set up quantity, write the number in corresponding warehouse column
+- Add or set logic. When importing products, the operator can set logic for either adding or setting the quantities.
+- Mass-archiving. See use instructions below.
+- Exporting active and archived products
+- Set product image. See instructions below
+- Set category. See instructions below
+
+== Mass archiving use ==
+
+To archive products in a batch the operator has to do following:
+1. Set archive value in the imported Excel file to 1
+2. Select either "Archive" or "Archive and rename" when importing the products
+
+Only products that correspond with already existing products in the database, whose Archive flag is set to 1 will be archived (or renamed and archived). If both values are not true, then the product is ignored.
+
+== Set product image use ==
+Batch Import-export program supports setting the product images. To set a product image, fill in a publicly available URL in the image_medium
+ field and import the excel. Dropbox is a good source. Image can be for example:
+ https://www.dropbox.com/sh/tfbwd6rtgvqxxh7/AACiF4-hox3z0LSx8czt6bhNa?dl=0&preview=07.png
+
+If the image_media field is empty, the import routine will ignore it
+
+If the image media has keyword DELETE in it, the import routine will empty the product image
+
+== Set category usage ==
+Batch Import-Export routine also supports setting catgories and Sub-categories.
+
+Separation between sub-categories is determined by " / " string (space, slash, space)
+
+Product category names can contain slash character. But no space and slash.
+
+Categories can be for example
+
+Clothes
+	Women
+		Shirts
+		Dresses
+	Men
+		Jeans
+		Shirts
+
+In category import the item for a woman's dress is determined as
+Clothes / Women / Dresses
+
+Respectively Men's shirt is determined as 
+Clothes / Men / Shirts
+
+If Batch Import-Export does not found already existing category, it will create it.
+
