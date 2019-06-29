@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <template id="inherit_report_invoice_document_mx" inherit_id="l10n_mx_edi.report_invoice_document_mx">
+        <xpath expr="//div[hasclass('btn-danger')]" position="attributes">
+            <attribute name="class">hidden</attribute>
+        </xpath>
+    </template>
+</odoo>
