@@ -12,6 +12,20 @@ Batch import-export application is used to export and import Odoo products in a 
 - Set product image. See instructions below
 - Set category. See instructions below
 
+== Required permissions == 
+
+Batch import-export products is intended to be used by system administrator.
+
+To import products one has to edit user permissions and allow
+"Import Product & Inventory" setting in user permissions.
+1. Enable developer mode
+2. Navigate to Settings / Manage Access rights / <user> / edit
+Under Technical Settings
+select 
+Import Product & Inventory permission for the user
+
+Relogin to activate new permissions
+
 == Mass archiving use ==
 
 To archive products in a batch the operator has to do following:
