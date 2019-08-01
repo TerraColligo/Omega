@@ -45,7 +45,8 @@ class export_product_with_inventory_file(models.TransientModel):
         #worksheet = workbook.add_worksheet('Products')
         worksheet = workbook.add_sheet('Products')
 
-        headers = ['id','Archive','invoice_policy','purchase_method','categ_id/name','pos_categ_id/name','available_in_pos','name','barcode','default_code','unit_of_measurement','uom_po_id','l10n_mx_edi_code_sat_id','supplier_taxes_id','taxes_id','type','route_ids/id','purchase_ok','sale_ok','standard_price','lst_price','seller_ids/name/name','image_medium']
+        headers = ['id','create_date','Archive','invoice_policy','purchase_method','categ_id/name','pos_categ_id/name','available_in_pos','name','barcode','default_code','unit_of_measurement','uom_po_id','l10n_mx_edi_code_sat_id','supplier_taxes_id','taxes_id','type','route_ids/id','purchase_ok','sale_ok','standard_price','lst_price','image_medium']
+         # headers = ['id','create_date','Archive','invoice_policy','purchase_method','categ_id/name','pos_categ_id/name','available_in_pos','name','barcode','default_code','unit_of_measurement','uom_po_id','l10n_mx_edi_code_sat_id','supplier_taxes_id','taxes_id','type','route_ids/id','purchase_ok','sale_ok','standard_price','lst_price','seller_ids/name/name','image_medium']
         warehouse_ids = []
         product_obj = self.env['product.product']
         product_ids = products.ids
@@ -109,6 +110,8 @@ class export_product_with_inventory_file(models.TransientModel):
             i=0
             worksheet.write(row_index, i, product_xml_ids.get(product.id))
             i +=1
+            worksheet.write(row_index, i, product.create_date)
+            i +=1
             if product.active:
                 worksheet.write(row_index, i, 0)
             else:
@@ -159,15 +162,15 @@ class export_product_with_inventory_file(models.TransientModel):
             worksheet.write(row_index, i, product.standard_price)
             i +=1
             worksheet.write(row_index, i, product.lst_price)
-            i +=1
-            seller_xml_ids = []
-            for seller in product.seller_ids.mapped('name'):
-                if seller.id not in sellers_mapping_dict:
-                    xml_rec = self.__ensure_xml_id_custom(seller)
-                    sellers_mapping_dict.update({seller.id: xml_rec and xml_rec[0][1] or False})
-                seller_xml_ids.append(sellers_mapping_dict.get(seller.id) or '')
+            # i +=1
+            # seller_xml_ids = []
+            # for seller in product.seller_ids.mapped('name'):
+            #     if seller.id not in sellers_mapping_dict:
+            #         xml_rec = self.__ensure_xml_id_custom(seller)
+            #         sellers_mapping_dict.update({seller.id: xml_rec and xml_rec[0][1] or False})
+            #     seller_xml_ids.append(sellers_mapping_dict.get(seller.id) or '')
 
-            worksheet.write(row_index, i, ','.join(seller_xml_ids))
+            # worksheet.write(row_index, i, ','.join(seller_xml_ids))
             i +=1
             worksheet.write(row_index, i, None)
             i +=1

@@ -40,7 +40,8 @@ class ProductImportBatch(models.Model):
         #To manange savepoiunt, we used ids instead of direct browsable record.
         ids = self.ids
         cr = self._cr
-        product_columns = ['id','Archive','invoice_policy','purchase_method','categ_id/name','pos_categ_id/name','available_in_pos','name','barcode','default_code','unit_of_measurement','uom_po_id','l10n_mx_edi_code_sat_id','supplier_taxes_id','taxes_id','type','route_ids/id','purchase_ok','sale_ok','standard_price','lst_price','seller_ids/name/name','image_medium']
+        product_columns = ['id','Archive','invoice_policy','purchase_method','categ_id/name','pos_categ_id/name','available_in_pos','name','barcode','default_code','unit_of_measurement','uom_po_id','l10n_mx_edi_code_sat_id','supplier_taxes_id','taxes_id','type','route_ids/id','purchase_ok','sale_ok','standard_price','lst_price','image_medium']
+        # product_columns = ['id','Archive','invoice_policy','purchase_method','categ_id/name','pos_categ_id/name','available_in_pos','name','barcode','default_code','unit_of_measurement','uom_po_id','l10n_mx_edi_code_sat_id','supplier_taxes_id','taxes_id','type','route_ids/id','purchase_ok','sale_ok','standard_price','lst_price','seller_ids/name/name','image_medium']
         category_mapping_dict = {}
         uom_mapping_dict = {}
         po_uom_mapping_dict = {}
@@ -65,6 +66,8 @@ class ProductImportBatch(models.Model):
                 for product in data:
                     if not inventory_columns:
                         inventory_columns = list(set(product.keys())-set(product_columns))
+                        if 'create_date' in inventory_columns:
+                            inventory_columns.remove('create_date')
 
                     active = product.get('Archive')
                     category_name = product.get('categ_id/name')
@@ -203,20 +206,20 @@ class ProductImportBatch(models.Model):
                             # customer_tax_id = customer_tax_mapping_dict.get(customer_tax_ext_id)
                             # if customer_tax_id:
                             #     customer_tax_ids.append(customer_tax_id)
-                    sellers = product.get('seller_ids/name/name')
-                    seller_ids = []
-                    if sellers:
-                        for seller_ext_id in sellers.split(','):
-                            seller_ext_id = seller_ext_id.strip()
-                            if seller_ext_id not in sellers_mapping_dict:
-                                seller_record = self.env.ref(seller_ext_id,False)
-                                if seller_record and seller_record._name=='res.partner':
-                                    sellers_mapping_dict.update({seller_ext_id:seller_record.id})
-                                else:
-                                    sellers_mapping_dict.update({seller_ext_id:False})
-                            seller_id = sellers_mapping_dict.get(seller_ext_id)
-                            if seller_id:
-                                seller_ids.append((0,0,{'name':seller_id,'min_qty':1,}))
+                    # sellers = product.get('seller_ids/name/name')
+                    # seller_ids = []
+                    # if sellers:
+                    #     for seller_ext_id in sellers.split(','):
+                    #         seller_ext_id = seller_ext_id.strip()
+                    #         if seller_ext_id not in sellers_mapping_dict:
+                    #             seller_record = self.env.ref(seller_ext_id,False)
+                    #             if seller_record and seller_record._name=='res.partner':
+                    #                 sellers_mapping_dict.update({seller_ext_id:seller_record.id})
+                    #             else:
+                    #                 sellers_mapping_dict.update({seller_ext_id:False})
+                    #         seller_id = sellers_mapping_dict.get(seller_ext_id)
+                    #         if seller_id:
+                    #             seller_ids.append((0,0,{'name':seller_id,'min_qty':1,}))
                     if product_type == 'Consumable':
                         product_type = 'consu'
                     elif product_type == 'Service':
@@ -257,8 +260,8 @@ class ProductImportBatch(models.Model):
                         product_vals.update({'supplier_taxes_id' : [(6,0,supplier_tax_ids)]})
                     if customer_tax_ids:
                         product_vals.update({'taxes_id' : [(6,0,customer_tax_ids)]})
-                    if seller_ids:
-                        product_vals.update({'seller_ids' : seller_ids})
+                    # if seller_ids:
+                    #     product_vals.update({'seller_ids' : seller_ids})
                     if uom_id:
                         product_vals.update({'uom_id' : uom_id,'uom_po_id':uom_id})
                     if po_uom_id:
